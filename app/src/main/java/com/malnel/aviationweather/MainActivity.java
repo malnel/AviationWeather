@@ -2,93 +2,43 @@ package com.malnel.aviationweather;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
-
-import com.malnel.aviationweather.model.Metar.MetarModel;
-
-import okhttp3.Cache;
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView result;
+    private EditText airport_txt;
+    private Button metar_btn;
+    private Button taf_btn;
+    private String airport_code;
+    public static String airport = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        result = findViewById(R.id.clouds_result);
+        airport_txt = findViewById(R.id.airport_code);
+        metar_btn = findViewById(R.id.metar_button);
+        taf_btn = findViewById(R.id.taf_button);
 
-//        checkMetar();
-        checkMetarDecoded();
-    }
-
-    private void checkMetar() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.checkwx.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        MetarApi metarApi = retrofit.create(MetarApi.class);
-
-        Call<Metar> call = metarApi.getResponse();
-        call.enqueue(new Callback<Metar>() {
-
+        airport_code = airport_txt.getText().toString();
+        metar_btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<Metar> call, Response<Metar> response) {
-                if (!response.isSuccessful()) {
-                    result.setText("Result:" + response.code());
-                    return;
+            public void onClick(View v) {
+                if (null != airport_txt.getText()) {
+                    assignAirport(airport_txt.getText().toString());
+                    Intent intent = new Intent(MainActivity.this, MetarActivity.class);
+                    intent.putExtra("ICAO", airport_txt.getText().toString());
+                    startActivity(intent);
                 }
-
-                Metar content = response.body();
-                if (null != content && !"0".equals(content.getResults())) {
-                    result.setText(content.getData()[0]);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Metar> call, Throwable t) {
-                result.setText(t.getMessage());
             }
         });
     }
 
-    private void checkMetarDecoded() {
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.checkwx.com/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        MetarDecodedApi metarDecodedApi = retrofit.create(MetarDecodedApi.class);
-
-        Call<MetarModel> call = metarDecodedApi.getResponse();
-        call.enqueue(new Callback<MetarModel>() {
-
-            @Override
-            public void onResponse(Call<MetarModel> call, Response<MetarModel> response) {
-                if (!response.isSuccessful()) {
-                    result.setText("Result:" + response.code());
-                    return;
-                }
-
-                MetarModel content = response.body();
-                if (null != content && !"0".equals(content.getResults())) {
-                    content.getData();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MetarModel> call, Throwable t) {
-                result.setText(t.getMessage());
-            }
-        });
+    private void assignAirport(String s) {
+        airport_code = s;
     }
 }
