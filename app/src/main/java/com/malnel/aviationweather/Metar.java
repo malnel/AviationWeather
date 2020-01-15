@@ -2,7 +2,10 @@ package com.malnel.aviationweather;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Airport {
+public class Metar {
+
+    @SerializedName("results")
+    private String results;
 
     @SerializedName("data")
     private String[] data;
@@ -10,4 +13,10 @@ public class Airport {
     public String[] getData() {
         return data;
     }
+
+    public String getResults() {
+        return results;
+    }
 }
+
+

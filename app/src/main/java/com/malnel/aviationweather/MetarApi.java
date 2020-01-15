@@ -4,9 +4,9 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 
-public interface WeatherApi {
+public interface MetarApi {
 
-    @Headers("X-API-KEY: #MY-KEY-HERE")
+    @Headers("X-API-KEY: # MY API KEY #")
     @GET("metar/KDFW/")
-    Call<Airport> getPosts();
+    Call<Metar> getResponse();
 }
