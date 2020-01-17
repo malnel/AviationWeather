@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DataManager.getInstance().getMetarModel();
         airport_txt = findViewById(R.id.airport_code);
         metar_btn = findViewById(R.id.metar_button);
         taf_btn = findViewById(R.id.taf_button);
