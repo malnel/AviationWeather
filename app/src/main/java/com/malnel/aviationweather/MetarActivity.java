@@ -32,10 +32,8 @@ public class MetarActivity extends AppCompatActivity {
         rawMetarTxt = findViewById(R.id.raw_metar_txt);
         decodedTxt = findViewById(R.id.decoded_txt);
 
-        String lol = DataManager.getInstance().getMetarDecoded().getData().get(0).getIcao();
-        rawMetarTxt.setText(lol);
-
-//        displayNearbyAirports(DataManager.getInstance().getAvWxGovMetars(), DataManager.getInstance().getLocation());
+        String rawMetar = DataManager.getInstance().getMetarDecoded(icao).getData().get(0).getRawText();
+        rawMetarTxt.setText(rawMetar);
 
     }
 

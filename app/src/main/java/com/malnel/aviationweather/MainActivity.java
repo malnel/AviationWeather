@@ -31,15 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText airport_txt;
     private Button metar_btn;
     private Button taf_btn;
-    private String airport_code;
-    public static String airport = "";
+    private String icao;
     private FusedLocationProviderClient client;
-    private GoogleApiClient googleApiClient;
-    private AvWxGovMetars metar;
-    private Taf taf;
-    private TafDecoded tafDecoded;
-    private MetarDecoded metarDecoded;
-    private Station station;
 
     public MainActivity() {
     }
@@ -61,29 +54,23 @@ public class MainActivity extends AppCompatActivity {
 //        metar = DataManager.getInstance().getAvWxGovMetars();
 //        taf = DataManager.getInstance().getTaf();
 //        station = DataManager.getInstance().getStation();
-        metarDecoded = DataManager.getInstance().getMetarDecoded();
+//        metarDecoded = DataManager.getInstance().getMetarDecoded();
 //        tafDecoded = DataManager.getInstance().getTafDecoded();
 
 
-        airport_code = airport_txt.getText().toString();
         metar_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != airport_txt.getText()) {
-                    assignAirport(airport_txt.getText().toString());
+                    icao = airport_txt.getText().toString();
                     Intent intent = new Intent(MainActivity.this, MetarActivity.class);
-                    intent.putExtra("ICAO", airport_txt.getText().toString());
+                    intent.putExtra("ICAO", icao);
+                    DataManager.getInstance().requestMetarDecoded(icao);
                     startActivity(intent);
                 }
             }
         });
     }
-
-
-    private void assignAirport(String s) {
-        airport_code = s;
-    }
-
 
     private void requestPermission() {
         ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION}, 1);

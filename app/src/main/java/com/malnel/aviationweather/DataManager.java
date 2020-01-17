@@ -9,6 +9,9 @@ import com.malnel.aviationweather.model.avwxrest.taf.Taf;
 import com.malnel.aviationweather.model.checkwx.metar.MetarDecoded;
 import com.malnel.aviationweather.model.checkwx.taf.TafDecoded;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -23,7 +26,7 @@ public class DataManager {
     private AvWxGovMetars avWxGovMetars;
     private Taf taf;
     private Station station;
-    private MetarDecoded metarDecoded;
+    private static Map<String, MetarDecoded> retrievedMetars = new HashMap<>();
     private TafDecoded tafDecoded;
     private Long metarTimestamp;
     private Long maxMetarAge = 900000L;
@@ -57,9 +60,8 @@ public class DataManager {
         return station;
     }
 
-    public MetarDecoded getMetarDecoded() {
-        requestMetarDecoded();
-        return metarDecoded;
+    public MetarDecoded getMetarDecoded(String icao) {
+        return retrievedMetars.get(icao);
     }
 
     public TafDecoded getTafDecoded() {
@@ -178,7 +180,7 @@ public class DataManager {
 
     }
 
-    private void requestMetarDecoded() {
+    public void requestMetarDecoded(String icao) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.checkwx.com/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -186,7 +188,7 @@ public class DataManager {
 
         WeatherApi weatherApi = retrofit.create(WeatherApi.class);
 
-        Call<MetarDecoded> call = weatherApi.getMetarDecoded("KJFK");
+        Call<MetarDecoded> call = weatherApi.getMetarDecoded(icao);
         call.enqueue(new Callback<MetarDecoded>() {
 
             @Override
@@ -198,7 +200,7 @@ public class DataManager {
 
                 MetarDecoded content = response.body();
                 if (null != content && !"0".equals(content.getData().get(0).getIcao())) {
-                    metarDecoded = content;
+                    retrievedMetars.put(icao, content);
                 }
             }
 
