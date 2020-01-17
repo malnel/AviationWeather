@@ -1,5 +1,5 @@
 
-package com.malnel.aviationweather.model.metar;
+package com.malnel.aviationweather.model.aviationweathergov;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

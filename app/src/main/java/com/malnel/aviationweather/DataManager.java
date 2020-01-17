@@ -3,10 +3,11 @@ package com.malnel.aviationweather;
 import android.location.Location;
 import android.util.Log;
 
-import com.malnel.aviationweather.model.metar.Feature;
-import com.malnel.aviationweather.model.metar.MetarModel;
-
-import java.util.List;
+import com.malnel.aviationweather.model.aviationweathergov.AvWxGovMetars;
+import com.malnel.aviationweather.model.avwxrest.station.Station;
+import com.malnel.aviationweather.model.avwxrest.taf.Taf;
+import com.malnel.aviationweather.model.checkwx.metar.MetarDecoded;
+import com.malnel.aviationweather.model.checkwx.taf.TafDecoded;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,7 +20,11 @@ public class DataManager {
     private DataManager() {}
 
     private static DataManager instance;
-    private MetarModel metarModel;
+    private AvWxGovMetars avWxGovMetars;
+    private Taf taf;
+    private Station station;
+    private MetarDecoded metarDecoded;
+    private TafDecoded tafDecoded;
     private Long metarTimestamp;
     private Long maxMetarAge = 900000L;
 
@@ -34,12 +39,32 @@ public class DataManager {
     private Location location;
 
 
-    public MetarModel getMetarModel() {
+    public AvWxGovMetars getAvWxGovMetars() {
         if (null == metarTimestamp || !isCurrent()) {
             requestMetar();
             metarTimestamp = System.currentTimeMillis();
         }
-        return metarModel;
+        return avWxGovMetars;
+    }
+
+    public Taf getTaf() {
+        requestTaf();
+        return taf;
+    }
+
+    public Station getStation() {
+        requestStation();
+        return station;
+    }
+
+    public MetarDecoded getMetarDecoded() {
+        requestMetarDecoded();
+        return metarDecoded;
+    }
+
+    public TafDecoded getTafDecoded() {
+        requestTafDecoded();
+        return tafDecoded;
     }
 
     private void requestMetar() {
@@ -48,26 +73,26 @@ public class DataManager {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        MetarApi metarApi = retrofit.create(MetarApi.class);
+        WeatherApi weatherApi = retrofit.create(WeatherApi.class);
 
-        Call<MetarModel> call = metarApi.getResponse();
-        call.enqueue(new Callback<MetarModel>() {
+        Call<AvWxGovMetars> call = weatherApi.getGovMetars();
+        call.enqueue(new Callback<AvWxGovMetars>() {
 
             @Override
-            public void onResponse(Call<MetarModel> call, Response<MetarModel> response) {
+            public void onResponse(Call<AvWxGovMetars> call, Response<AvWxGovMetars> response) {
                 if (!response.isSuccessful()) {
                     Log.i("API response code: ", String.valueOf(response.code()));
                     return;
                 }
 
-                MetarModel content = response.body();
+                AvWxGovMetars content = response.body();
                 if (null != content && !"0".equals(content.getFeatures())) {
-                    metarModel = content;
+                    avWxGovMetars = content;
                 }
             }
 
             @Override
-            public void onFailure(Call<MetarModel> call, Throwable t) {
+            public void onFailure(Call<AvWxGovMetars> call, Throwable t) {
                 Log.e("API failure msg: ", t.getMessage());
             }
         });
@@ -78,8 +103,8 @@ public class DataManager {
         return System.currentTimeMillis() - metarTimestamp < maxMetarAge;
     }
 
-    public void setMetarModel(MetarModel metarModel) {
-        this.metarModel = metarModel;
+    public void setAvWxGovMetars(AvWxGovMetars avWxGovMetars) {
+        this.avWxGovMetars = avWxGovMetars;
     }
 
     public static DataManager getInstance() {
@@ -87,5 +112,133 @@ public class DataManager {
             instance = new DataManager();
         }
         return instance;
+    }
+
+    private void requestTaf() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://avwx.rest/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        WeatherApi weatherApi = retrofit.create(WeatherApi.class);
+
+        Call<Taf> call = weatherApi.getTaf();
+        call.enqueue(new Callback<Taf>() {
+
+            @Override
+            public void onResponse(Call<Taf> call, Response<Taf> response) {
+                if (!response.isSuccessful()) {
+                    Log.i("API response code: ", String.valueOf(response.code()));
+                    return;
+                }
+
+                Taf content = response.body();
+                if (null != content && !"0".equals(content.getRaw())) {
+                    taf = content;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Taf> call, Throwable t) {
+                Log.e("API failure msg: ", t.getMessage());
+            }
+        });
+
+    }
+
+    private void requestStation() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://avwx.rest/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        WeatherApi weatherApi = retrofit.create(WeatherApi.class);
+
+        Call<Station> call = weatherApi.getStation();
+        call.enqueue(new Callback<Station>() {
+
+            @Override
+            public void onResponse(Call<Station> call, Response<Station> response) {
+                if (!response.isSuccessful()) {
+                    Log.i("API response code: ", String.valueOf(response.code()));
+                    return;
+                }
+
+                Station content = response.body();
+                if (null != content && !"0".equals(content.getName())) {
+                    station = content;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Station> call, Throwable t) {
+                Log.e("API failure msg: ", t.getMessage());
+            }
+        });
+
+    }
+
+    private void requestMetarDecoded() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.checkwx.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        WeatherApi weatherApi = retrofit.create(WeatherApi.class);
+
+        Call<MetarDecoded> call = weatherApi.getMetarDecoded("KJFK");
+        call.enqueue(new Callback<MetarDecoded>() {
+
+            @Override
+            public void onResponse(Call<MetarDecoded> call, Response<MetarDecoded> response) {
+                if (!response.isSuccessful()) {
+                    Log.i("API response code: ", String.valueOf(response.code()));
+                    return;
+                }
+
+                MetarDecoded content = response.body();
+                if (null != content && !"0".equals(content.getData().get(0).getIcao())) {
+                    metarDecoded = content;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MetarDecoded> call, Throwable t) {
+                Log.e("API failure msg: ", t.getMessage());
+            }
+        });
+
+    }
+
+    private void requestTafDecoded() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.checkwx.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        WeatherApi weatherApi = retrofit.create(WeatherApi.class);
+
+        Call<TafDecoded> call = weatherApi.getTafDecoded();
+        call.enqueue(new Callback<TafDecoded>() {
+
+            @Override
+            public void onResponse(Call<TafDecoded> call, Response<TafDecoded> response) {
+                if (!response.isSuccessful()) {
+                    Log.i("API response code: ", String.valueOf(response.code()));
+                    return;
+                }
+
+                TafDecoded content = response.body();
+                if (null != content && !"0".equals(content.getData().get(0).getIcao())) {
+                    tafDecoded = content;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TafDecoded> call, Throwable t) {
+                Log.e("API failure msg: ", t.getMessage());
+            }
+        });
+
     }
 }

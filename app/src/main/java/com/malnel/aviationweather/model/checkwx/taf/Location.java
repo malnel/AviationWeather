@@ -1,26 +1,18 @@
 
-package com.malnel.aviationweather.model.metar;
+package com.malnel.aviationweather.model.checkwx.taf;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Geometry {
+public class Location {
 
-    @SerializedName("type")
-    @Expose
-    private String type;
     @SerializedName("coordinates")
     @Expose
     private List<Double> coordinates = null;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+    @SerializedName("type")
+    @Expose
+    private String type;
 
     public List<Double> getCoordinates() {
         return coordinates;
@@ -28,6 +20,14 @@ public class Geometry {
 
     public void setCoordinates(List<Double> coordinates) {
         this.coordinates = coordinates;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
 }

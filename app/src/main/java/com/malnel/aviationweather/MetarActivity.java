@@ -3,14 +3,14 @@ package com.malnel.aviationweather;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.malnel.aviationweather.model.metar.Feature;
-import com.malnel.aviationweather.model.metar.MetarModel;
+import com.malnel.aviationweather.model.aviationweathergov.Feature;
+import com.malnel.aviationweather.model.aviationweathergov.AvWxGovMetars;
+import com.malnel.aviationweather.model.checkwx.metar.MetarDecoded;
 
 import java.util.List;
 
@@ -19,7 +19,8 @@ public class MetarActivity extends AppCompatActivity {
 
     private TextView rawMetarTxt;
     private TextView decodedTxt;
-    private String airport;
+    private String icao;
+    private MetarDecoded metarDecoded;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,17 +28,20 @@ public class MetarActivity extends AppCompatActivity {
         setContentView(R.layout.metar_activity);
 
         Intent intent = getIntent();
-        airport = intent.getStringExtra("ICAO");
+        icao = intent.getStringExtra("ICAO");
         rawMetarTxt = findViewById(R.id.raw_metar_txt);
         decodedTxt = findViewById(R.id.decoded_txt);
 
-        displayNearbyAirports(DataManager.getInstance().getMetarModel(), DataManager.getInstance().getLocation());
+        String lol = DataManager.getInstance().getMetarDecoded().getData().get(0).getIcao();
+        rawMetarTxt.setText(lol);
+
+//        displayNearbyAirports(DataManager.getInstance().getAvWxGovMetars(), DataManager.getInstance().getLocation());
 
     }
 
 
-    private void displayNearbyAirports(MetarModel metarModel, Location location) {
-        List<Feature> airports = metarModel.getFeatures();
+    private void displayNearbyAirports(AvWxGovMetars avWxGovMetars, Location location) {
+        List<Feature> airports = avWxGovMetars.getFeatures();
         StringBuilder sb = new StringBuilder();
 
         for (Feature feature : airports) {

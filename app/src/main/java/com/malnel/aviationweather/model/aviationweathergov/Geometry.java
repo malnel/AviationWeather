@@ -1,18 +1,18 @@
 
-package com.malnel.aviationweather.model.metar;
+package com.malnel.aviationweather.model.aviationweathergov;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MetarModel {
+public class Geometry {
 
     @SerializedName("type")
     @Expose
     private String type;
-    @SerializedName("features")
+    @SerializedName("coordinates")
     @Expose
-    private List<Feature> features = null;
+    private List<Double> coordinates = null;
 
     public String getType() {
         return type;
@@ -22,11 +22,12 @@ public class MetarModel {
         this.type = type;
     }
 
-    public List<Feature> getFeatures() {
-        return features;
+    public List<Double> getCoordinates() {
+        return coordinates;
     }
 
-    public void setFeatures(List<Feature> features) {
-        this.features = features;
+    public void setCoordinates(List<Double> coordinates) {
+        this.coordinates = coordinates;
     }
+
 }
