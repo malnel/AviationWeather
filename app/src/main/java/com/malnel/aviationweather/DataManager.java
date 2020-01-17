@@ -1,8 +1,12 @@
 package com.malnel.aviationweather;
 
+import android.location.Location;
 import android.util.Log;
 
+import com.malnel.aviationweather.model.metar.Feature;
 import com.malnel.aviationweather.model.metar.MetarModel;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -18,6 +22,17 @@ public class DataManager {
     private MetarModel metarModel;
     private Long metarTimestamp;
     private Long maxMetarAge = 900000L;
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    private Location location;
+
 
     public MetarModel getMetarModel() {
         if (null == metarTimestamp || !isCurrent()) {
