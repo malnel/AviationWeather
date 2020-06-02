@@ -3,8 +3,6 @@ package com.malnel.aviationweather;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
@@ -63,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (null != airport_txt.getText()) {
                     icao = airport_txt.getText().toString();
-                    Intent intent = new Intent(MainActivity.this, MetarActivity.class);
+
+                    Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
                     intent.putExtra("ICAO", icao);
-                    DataManager.getInstance().requestMetarDecoded(icao);
                     startActivity(intent);
                 }
             }

@@ -26,7 +26,7 @@ public class DataManager {
     private AvWxGovMetars avWxGovMetars;
     private Taf taf;
     private Station station;
-    private static Map<String, MetarDecoded> retrievedMetars = new HashMap<>();
+    public Map<String, MetarDecoded> retrievedMetars = new HashMap<>();
     private TafDecoded tafDecoded;
     private Long metarTimestamp;
     private Long maxMetarAge = 900000L;

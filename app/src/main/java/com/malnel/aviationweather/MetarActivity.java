@@ -2,14 +2,20 @@ package com.malnel.aviationweather;
 
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.malnel.aviationweather.model.aviationweathergov.Feature;
 import com.malnel.aviationweather.model.aviationweathergov.AvWxGovMetars;
+import com.malnel.aviationweather.model.checkwx.metar.Datum;
 import com.malnel.aviationweather.model.checkwx.metar.MetarDecoded;
 
 import java.util.List;
@@ -31,9 +37,28 @@ public class MetarActivity extends AppCompatActivity {
         icao = intent.getStringExtra("ICAO");
         rawMetarTxt = findViewById(R.id.raw_metar_txt);
         decodedTxt = findViewById(R.id.decoded_txt);
+        decodedTxt.setVisibility(View.INVISIBLE);
+        Switch decodeBtn = (Switch) findViewById(R.id.decode_btn);
+        decodeBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    rawMetarTxt.setVisibility(View.INVISIBLE);
+                    decodedTxt.setVisibility(View.VISIBLE);
+                } else {
+                    rawMetarTxt.setVisibility(View.VISIBLE);
+                    decodedTxt.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
 
-        String rawMetar = DataManager.getInstance().getMetarDecoded(icao).getData().get(0).getRawText();
+        //this should be displayed if the other thread is done
+        final Datum datum = DataManager.getInstance().getMetarDecoded(icao).getData().get(0);
+        String rawMetar = datum.getRawText();
         rawMetarTxt.setText(rawMetar);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("Wind: " + datum.getWind().getSpeedKts() + " knots at " + datum.getWind().getDegrees() + " degrees");
+        decodedTxt.setText(sb.toString());
 
     }
 
@@ -66,5 +91,12 @@ public class MetarActivity extends AppCompatActivity {
         //true if within 10000km
         return loc1.distanceTo(loc2) < 10000000;
     }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
+    }
+
 
 }
