@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AviationWeather</string>
+    <string name="decode">Decode</string>
 </resources>
