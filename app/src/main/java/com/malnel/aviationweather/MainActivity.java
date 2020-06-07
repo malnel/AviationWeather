@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -24,6 +25,8 @@ import com.malnel.aviationweather.model.avwxrest.taf.Taf;
 import com.malnel.aviationweather.model.checkwx.metar.MetarDecoded;
 import com.malnel.aviationweather.model.checkwx.taf.TafDecoded;
 
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity {
 
     private EditText airport_txt;
@@ -31,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private Button taf_btn;
     private String icao;
     private FusedLocationProviderClient client;
+    private static final String ICAO_REGEX = "[A-Za-z]{4}";
 
     public MainActivity() {
     }
@@ -48,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         metar_btn = findViewById(R.id.metar_button);
         taf_btn = findViewById(R.id.taf_button);
 
+        Pattern pattern = Pattern.compile(ICAO_REGEX);
+
         getLocation();
 //        metar = DataManager.getInstance().getAvWxGovMetars();
 //        taf = DataManager.getInstance().getTaf();
@@ -59,12 +65,17 @@ public class MainActivity extends AppCompatActivity {
         metar_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != airport_txt.getText()) {
+                if (null != airport_txt.getText()
+                        && pattern.matcher(airport_txt.getText().toString()).matches()) {
+
                     icao = airport_txt.getText().toString();
 
                     Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
                     intent.putExtra("ICAO", icao);
                     startActivity(intent);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Airport code must be 4 letters.",
+                            Toast.LENGTH_LONG).show();
                 }
             }
         });

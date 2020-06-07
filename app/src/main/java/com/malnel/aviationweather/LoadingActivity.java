@@ -1,6 +1,5 @@
 package com.malnel.aviationweather;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,13 +45,20 @@ public class LoadingActivity extends AppCompatActivity {
                 }
 
                 MetarDecoded content = response.body();
-                if (null != content && !"0".equals(content.getData().get(0).getIcao())) {
+                if (null != content && 0 != content.getData().size()) {
                     DataManager.getInstance().retrievedMetars.put(icao, content);
 
                     Intent intent = new Intent(LoadingActivity.this, MetarActivity.class);
                     intent.putExtra("ICAO", icao);
                     startActivity(intent);
+
+                } else {
+
+                    Intent intent = new Intent(LoadingActivity.this, FailureActivity.class);
+                    intent.putExtra("ICAO", icao);
+                    startActivity(intent);
                 }
+
             }
 
 
