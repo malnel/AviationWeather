@@ -35,6 +35,8 @@ public class MetarActivity extends AppCompatActivity {
     private TextView cloudsInfo;
     private TextView temperatureInfo;
     private TextView dewpointInfo;
+    private TextView pressure;
+    private TextView observed;
 
 
     @Override
@@ -79,11 +81,13 @@ public class MetarActivity extends AppCompatActivity {
                 color = Color.GREEN;
                 break;
             case "MVFR":
-                color = Color.YELLOW;
+                color = Color.rgb(255, 102, 0); //ORANGE
                 break;
             case "IFR":
                 color = Color.RED;
                 break;
+            default:
+                color = Color.BLACK;
         }
         flightCategoryInfo.setTextColor(color);
 
@@ -91,9 +95,13 @@ public class MetarActivity extends AppCompatActivity {
         stationInfo = findViewById(R.id.station_name_txt);
         stationInfo.setText(station);
 
-        String wind = datum.getWind().getSpeedKts() + " knots at " + datum.getWind().getDegrees() + " degrees";
+        StringBuilder windSb = new StringBuilder(datum.getWind().getSpeedKts());
+        if (null != datum.getWind().getDegrees()) {
+            windSb.append(datum.getWind().getSpeedKts());
+            windSb.append(" knots at " + datum.getWind().getDegrees() + " degrees");
+        }
         windInfo = findViewById(R.id.wind_info_txt);
-        windInfo.setText(wind);
+        windInfo.setText(windSb.toString());
 
         StringBuilder visibilitySb = new StringBuilder();
         if (null != datum.getVisibility().getMiles()) {
@@ -108,7 +116,10 @@ public class MetarActivity extends AppCompatActivity {
         List<Cloud> clouds = datum.getClouds();
         StringBuilder cloudsSb = new StringBuilder("");
         for (Cloud cloud : clouds) {
-            cloudsSb.append(cloud.getText() + " at " + cloud.getBaseFeetAgl() + " ft\n");
+            cloudsSb.append(cloud.getText());
+            if (null != cloud.getBaseFeetAgl()) {
+                cloudsSb.append(" at " + cloud.getBaseFeetAgl() + " ft\n");
+            }
         }
         cloudsInfo = findViewById(R.id.clouds_info_txt);
         cloudsInfo.setText(cloudsSb.toString());
@@ -120,6 +131,24 @@ public class MetarActivity extends AppCompatActivity {
         String dewpoint = datum.getDewpoint().getCelsius() + " C";
         dewpointInfo = findViewById(R.id.dewpoint_info_txt);
         dewpointInfo.setText(dewpoint);
+
+        StringBuilder pressureSb = new StringBuilder();
+        if (null != datum.getBarometer().getHpa()) {
+            pressureSb.append(datum.getBarometer().getHpa() + " hPa ");
+        }
+        if (null != datum.getBarometer().getHg()) {
+            pressureSb.append(datum.getBarometer().getHg() + " mmHg");
+        }
+        pressure = findViewById(R.id.pressure_info_txt);
+        pressure.setText(pressureSb.toString());
+
+        StringBuilder observedSb = new StringBuilder();
+        observedSb.append(datum.getObserved().substring(0, 10));
+        observedSb.append(" at ");
+        observedSb.append(datum.getObserved().substring(11, 19));
+        observedSb.append(" UTC");
+        observed = findViewById(R.id.observed_info_txt);
+        observed.setText(observedSb.toString());
 
     }
 

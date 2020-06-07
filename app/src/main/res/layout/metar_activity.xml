@@ -8,16 +8,16 @@
 
     <TextView
         android:id="@+id/raw_metar_txt"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:text="Downloading..."
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.487"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/decode_btn" />
+        app:layout_constraintTop_toBottomOf="@+id/decode_btn"
+        tools:text="Oops... No data available" />
 
     <Switch
         android:id="@+id/decode_btn"
@@ -52,7 +52,7 @@
                 android:id="@+id/flt_category_txt"
                 android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:text="" />
 
             <TextView
@@ -73,7 +73,7 @@
                 android:id="@+id/wind_txt"
                 android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:text="Wind:" />
 
             <TextView
@@ -94,7 +94,7 @@
                 android:id="@+id/visibility_txt"
                 android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:text="Visibility:" />
 
             <TextView
@@ -115,7 +115,7 @@
                 android:id="@+id/clouds_txt"
                 android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:text="Clouds:" />
 
             <TextView
@@ -136,7 +136,7 @@
                 android:id="@+id/temperature_txt"
                 android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:text="Temp:" />
 
             <TextView
@@ -157,11 +157,53 @@
                 android:id="@+id/dewpoint_txt"
                 android:layout_width="10dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:text="Dewpoint:" />
 
             <TextView
                 android:id="@+id/dewpoint_info_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/row6"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/pressure_txt"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Pressure:" />
+
+            <TextView
+                android:id="@+id/pressure_info_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/row7"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/observed_txt"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Observed:" />
+
+            <TextView
+                android:id="@+id/observed_info_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
